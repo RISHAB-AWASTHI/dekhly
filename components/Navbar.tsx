@@ -2,19 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Bell, Search, ChevronDown, Pencil, User, HelpCircle, LogOut } from "lucide-react";
 import Logo from "./Logo";
 import { profiles } from "@/lib/data";
 import { signOut, useAuth } from "@/lib/auth";
 
-const LINKS = ["Home", "Movies", "Series", "New & Hot", "My List"];
+const LINKS = [
+  { name: "Home", href: "/browse" },
+  { name: "Movies", href: "/browse" },
+  { name: "Series", href: "/browse" },
+  { name: "Watch Later", href: "/watch-later" },
+];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -52,20 +58,24 @@ export default function Navbar() {
         </Link>
 
         <ul className="hidden items-center gap-7 text-[15px] lg:flex">
-          {LINKS.map((link, i) => (
-            <li key={link}>
-              <button
-                className={`relative transition hover:text-white ${
-                  i === 0 ? "font-semibold text-white" : "text-neutral-400"
-                }`}
-              >
-                {link}
-                {i === 0 && (
-                  <span className="bg-brand absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full" />
-                )}
-              </button>
-            </li>
-          ))}
+          {LINKS.map((link) => {
+            const isActive = pathname === link.href && link.name !== "Movies" && link.name !== "Series";
+            return (
+              <li key={link.name}>
+                <Link
+                  href={link.href}
+                  className={`relative transition hover:text-white ${
+                    isActive ? "font-semibold text-white" : "text-neutral-400"
+                  }`}
+                >
+                  {link.name}
+                  {isActive && (
+                    <span className="bg-brand absolute -bottom-1.5 left-0 h-0.5 w-full rounded-full" />
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
         <div className="ml-auto flex items-center gap-3 text-neutral-200">
