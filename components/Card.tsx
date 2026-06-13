@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Plus, ChevronDown, Star } from "lucide-react";
+import { Play, Plus, ChevronDown, Star, Check } from "lucide-react";
 import { posterUrl, watchHref, type Title } from "@/lib/data";
+import { useWatchLater } from "@/lib/useWatchLater";
 
 export default function Card({
   title,
@@ -14,6 +15,9 @@ export default function Card({
   rank?: number;
   onSelect: (t: Title) => void;
 }) {
+  const { hasTitle, toggleWatchLater } = useWatchLater();
+  const isSaved = hasTitle(title.id);
+
   return (
     <div className="group/card flex shrink-0 items-end">
       {rank && (
@@ -43,6 +47,18 @@ export default function Card({
             </span>
           )}
 
+          {/* Top right watch later button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleWatchLater(title);
+            }}
+            className="absolute right-2 top-2 z-20 grid h-8 w-8 place-items-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/70"
+            aria-label={isSaved ? "Remove from Watch Later" : "Add to Watch Later"}
+          >
+            {isSaved ? <Check size={16} className="text-brand" /> : <Plus size={16} />}
+          </button>
+
           {/* Hover-only detail layer */}
           <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/95 via-black/35 to-transparent p-3 opacity-0 transition-opacity duration-300 group-hover/card:opacity-100">
             <p className="font-display truncate text-sm font-bold text-white">
@@ -69,10 +85,14 @@ export default function Card({
                 <Play size={13} fill="currentColor" /> Play
               </Link>
               <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleWatchLater(title);
+                }}
                 className="grid h-7 w-7 place-items-center rounded-md border border-white/30 text-white transition hover:border-white"
-                aria-label="Add to list"
+                aria-label={isSaved ? "Remove from Watch Later" : "Add to Watch Later"}
               >
-                <Plus size={14} />
+                {isSaved ? <Check size={14} className="text-brand" /> : <Plus size={14} />}
               </button>
               <button
                 onClick={() => onSelect(title)}
