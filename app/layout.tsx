@@ -16,9 +16,28 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "dekhly — Stream smarter",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://dekhly.app",
+  ),
+  title: "dekhly — Find where to watch movies & series in India",
   description:
-    "Discover and stream trending series, blockbuster films and documentaries. A modern streaming interface built with Next.js.",
+    "Discover trending movies and series and instantly find where to stream, rent or buy them across Netflix, Prime Video, JioHotstar and more — all in one place.",
+  keywords: [
+    "where to watch",
+    "streaming India",
+    "Netflix",
+    "Prime Video",
+    "JioHotstar",
+    "movies",
+    "web series",
+  ],
+  openGraph: {
+    siteName: "dekhly",
+    type: "website",
+    title: "dekhly — Find where to watch movies & series in India",
+    description:
+      "Find where to stream, rent or buy any movie or series across all platforms in India.",
+  },
 };
 
 export default function RootLayout({

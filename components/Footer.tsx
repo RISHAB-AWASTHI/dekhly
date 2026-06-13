@@ -47,12 +47,26 @@ export default function Footer() {
 
         <div className="mt-6 flex items-center gap-2">
           <Logo className="text-base" />
-          <span className="text-xs text-neutral-600">· Stream smarter.</span>
+          <span className="text-xs text-neutral-600">· Find where to watch.</span>
         </div>
-        <p className="mt-2 text-xs text-neutral-600">
-          © {2026} dekhly. A demo streaming interface built with Next.js.
-          Metadata by TMDB. dekhly hosts no media.
+        <p className="mt-3 max-w-2xl text-xs leading-relaxed text-neutral-600">
+          © {2026} dekhly. A movie &amp; series discovery service — we help you
+          find where titles are legally available to stream, rent or buy.
+          dekhly hosts and streams no media; every link points to an official
+          platform.
         </p>
+        <p className="mt-2 max-w-2xl text-xs leading-relaxed text-neutral-600">
+          This product uses the TMDB API but is not endorsed or certified by
+          TMDB. Streaming availability data provided by JustWatch.
+        </p>
+        <a
+          href="https://www.themoviedb.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-block text-xs text-neutral-500 transition hover:text-neutral-300"
+        >
+          Powered by TMDB
+        </a>
       </div>
     </footer>
   );

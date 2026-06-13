@@ -33,6 +33,24 @@ body {
   background: rgba(124, 92, 255, 0.35);
 }
 
+/* Pointer cursor on interactive elements (Tailwind v4 drops this default) */
+button,
+[role="button"],
+a,
+label,
+select,
+summary,
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[disabled] {
+  cursor: not-allowed;
+}
+
 /* Subtle global scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
@@ -106,6 +124,17 @@ body {
 }
 .animate-fade-up {
   animation: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 45s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 @keyframes shimmer {

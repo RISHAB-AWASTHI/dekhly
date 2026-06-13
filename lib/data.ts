@@ -23,8 +23,6 @@ export type Row = {
   titles: Title[];
 };
 
-export type Profile = { id: string; name: string; color: string };
-
 /* ---------------- Image helpers ---------------- */
 
 export const tmdbImg = (path: string, size: string) =>
@@ -44,12 +42,22 @@ export const backdropUrl = (t: Title) =>
 export const picsumBackdrop = (seed: string) =>
   `https://picsum.photos/seed/${seed}/1600/900`;
 
-// Deep-link into the player.
-export const watchHref = (t: Title) =>
-  `/watch/${t.type}/${t.tmdbId}?name=${encodeURIComponent(t.name)}`;
+// SEO-friendly slug from a title name, e.g. "Dune: Part Two" -> "dune-part-two".
+export const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "") || "title";
+
+// Canonical, indexable detail page for a title.
+export const titleHref = (t: Title) =>
+  `/title/${t.type}/${t.tmdbId}/${slugify(t.name)}`;
+
+// All "watch" CTAs lead to the rich, SEO-friendly detail page.
+export const watchHref = (t: Title) => titleHref(t);
 
 /* ---------------- Curated offline catalog ----------------
-   Real TMDB ids so the embed players actually resolve a title.
+   Real TMDB ids so the where-to-watch lookup resolves a real title.
    When a TMDB API key is set, lib/tmdb.ts replaces this with live data
    (including real posters & backdrops). */
 
@@ -192,11 +200,4 @@ export const curatedRows: Row[] = [
     titles: all.filter((t) => t.genres.includes("Comedy")),
   },
   { id: "mylist", title: "My List", titles: pick(all, [0, 5, 27, 11, 22, 32]) },
-];
-
-export const profiles: Profile[] = [
-  { id: "p1", name: "Rishabh", color: "#6d4aff" },
-  { id: "p2", name: "Aarohi", color: "#e11d2a" },
-  { id: "p3", name: "Family", color: "#2bb673" },
-  { id: "p4", name: "Kids", color: "#f5a623" },
 ];

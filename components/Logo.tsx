@@ -6,17 +6,31 @@ export default function Logo({
   mark?: boolean;
 }) {
   return (
-    <span className={`inline-flex select-none items-center gap-2 ${className}`}>
+    <span className={`inline-flex select-none items-center gap-[0.4em] ${className}`}>
       {mark && (
-        <span className="bg-brand-gradient grid h-[1.05em] w-[1.05em] place-items-center rounded-[0.32em] shadow-[0_4px_14px_-2px_rgba(124,92,255,0.6)]">
-          <svg viewBox="0 0 24 24" className="h-[0.58em] w-[0.58em]" fill="white">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </span>
+        <svg
+          viewBox="0 0 32 32"
+          className="h-[1.1em] w-[1.1em]"
+          role="img"
+          aria-label="dekhly"
+        >
+          <defs>
+            <linearGradient id="dk-mark" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#8f72ff" />
+              <stop offset="1" stopColor="#6d4df0" />
+            </linearGradient>
+          </defs>
+          {/* Rounded square, single restrained color */}
+          <rect x="1" y="1" width="30" height="30" rx="9" fill="url(#dk-mark)" />
+          {/* Optically centered play, rounded corners for a premium feel */}
+          <path
+            d="M13.4 11.3c0-1 1.1-1.6 1.9-1.1l6.8 4.1c.9.5.9 1.7 0 2.2l-6.8 4.1c-.8.5-1.9-.1-1.9-1.1v-8.3Z"
+            fill="white"
+          />
+        </svg>
       )}
-      <span className="font-display font-extrabold tracking-tight">
-        <span className="text-white">dekh</span>
-        <span className="text-gradient">ly</span>
+      <span className="font-display font-extrabold tracking-[-0.04em] text-white">
+        dekhly
       </span>
     </span>
   );
