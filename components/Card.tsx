@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Plus, ChevronDown, Star, Check } from "lucide-react";
+import { Tv, Bookmark, BookmarkCheck, ChevronDown, Star } from "lucide-react";
 import { posterUrl, watchHref, type Title } from "@/lib/data";
 import { useWatchLater } from "@/lib/useWatchLater";
 
@@ -10,26 +10,30 @@ export default function Card({
   title,
   rank,
   onSelect,
+  fill = false,
 }: {
   title: Title;
   rank?: number;
   onSelect: (t: Title) => void;
+  fill?: boolean;
 }) {
   const { hasTitle, toggleWatchLater } = useWatchLater();
   const isSaved = hasTitle(title.id);
 
   return (
-    <div className="group/card flex shrink-0 items-end">
+    <div
+      className={`group/card flex items-end ${fill ? "w-full" : "shrink-0"}`}
+    >
       {rank && (
         <span
-          className="font-display -mr-5 select-none text-[7.5rem] font-extrabold leading-[0.7] text-transparent"
-          style={{ WebkitTextStroke: "2px rgba(255,255,255,0.18)" }}
+          className="font-display pointer-events-none -mr-6 select-none text-[8.5rem] font-black leading-[0.62] text-ink-soft md:-mr-7 md:text-[10.5rem]"
+          style={{ WebkitTextStroke: "2.5px rgba(255,255,255,0.35)" }}
         >
           {rank}
         </span>
       )}
 
-      <div className="relative w-[150px] md:w-[172px]">
+      <div className={`relative ${fill ? "w-full" : "w-[150px] md:w-[172px]"}`}>
         <div className="card-shadow relative aspect-[2/3] overflow-hidden rounded-xl bg-ink-card ring-1 ring-white/[0.06] transition-all duration-300 ease-out group-hover/card:-translate-y-1 group-hover/card:ring-white/20">
           <button onClick={() => onSelect(title)} className="absolute inset-0">
             <Image
@@ -56,7 +60,11 @@ export default function Card({
             className="absolute right-2 top-2 z-20 grid h-8 w-8 place-items-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-black/70"
             aria-label={isSaved ? "Remove from Watch Later" : "Add to Watch Later"}
           >
-            {isSaved ? <Check size={16} className="text-brand" /> : <Plus size={16} />}
+            {isSaved ? (
+              <BookmarkCheck size={16} className="text-brand" fill="currentColor" />
+            ) : (
+              <Bookmark size={16} />
+            )}
           </button>
 
           {/* Hover-only detail layer */}
@@ -82,18 +90,8 @@ export default function Card({
                 href={watchHref(title)}
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-white py-1.5 text-xs font-bold text-ink transition hover:bg-white/85"
               >
-                <Play size={13} fill="currentColor" /> Play
+                <Tv size={13} /> Watch
               </Link>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleWatchLater(title);
-                }}
-                className="grid h-7 w-7 place-items-center rounded-md border border-white/30 text-white transition hover:border-white"
-                aria-label={isSaved ? "Remove from Watch Later" : "Add to Watch Later"}
-              >
-                {isSaved ? <Check size={14} className="text-brand" /> : <Plus size={14} />}
-              </button>
               <button
                 onClick={() => onSelect(title)}
                 className="grid h-7 w-7 place-items-center rounded-md border border-white/30 text-white transition hover:border-white"

@@ -1,36 +1,85 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Play, Info, Plus, Star } from "lucide-react";
+import { Tv, Info, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { backdropUrl, watchHref, type Title } from "@/lib/data";
 
+const ROTATE_MS = 7000;
+
 export default function Hero({
-  title,
+  titles,
   onMoreInfo,
 }: {
-  title: Title;
+  titles: Title[];
   onMoreInfo: (t: Title) => void;
 }) {
+  const slides = titles.slice(0, 5);
+  const [active, setActive] = useState(0);
+
+  // Auto-rotate through the featured titles.
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const id = setInterval(
+      () => setActive((i) => (i + 1) % slides.length),
+      ROTATE_MS,
+    );
+    return () => clearInterval(id);
+  }, [slides.length]);
+
+  if (!slides.length) return null;
+  const title = slides[active];
+
+  const go = (dir: 1 | -1) =>
+    setActive((i) => (i + dir + slides.length) % slides.length);
+
   return (
     <section className="relative h-[88vh] min-h-[600px] w-full overflow-hidden">
+      {/* Crossfading backdrops */}
       <div className="absolute inset-0">
-        <Image
-          src={backdropUrl(title)}
-          alt={title.name}
-          fill
-          priority
-          sizes="100vw"
-          className="animate-slow-zoom object-cover object-top"
-        />
+        {slides.map((t, i) => (
+          <Image
+            key={t.id}
+            src={backdropUrl(t)}
+            alt={t.name}
+            fill
+            priority={i === 0}
+            sizes="100vw"
+            className={`object-cover object-top transition-opacity duration-1000 ${
+              i === active ? "animate-slow-zoom opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
         {/* Layered cinematic scrims */}
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/40" />
         <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-ink to-transparent" />
       </div>
 
+      {/* Desktop side arrows */}
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={() => go(-1)}
+            aria-label="Previous"
+            className="absolute left-3 top-1/2 z-20 hidden -translate-y-1/2 place-items-center rounded-full bg-black/40 p-2 text-white/80 ring-1 ring-white/10 transition hover:bg-black/70 hover:text-white md:grid"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={() => go(1)}
+            aria-label="Next"
+            className="absolute right-3 top-1/2 z-20 hidden -translate-y-1/2 place-items-center rounded-full bg-black/40 p-2 text-white/80 ring-1 ring-white/10 transition hover:bg-black/70 hover:text-white md:grid"
+          >
+            <ChevronRight size={24} />
+          </button>
+        </>
+      )}
+
       <div className="relative z-10 flex h-full flex-col justify-end px-5 pb-[12vh] md:px-16">
-        <div className="max-w-2xl animate-fade-up">
+        {/* key re-triggers the entrance animation on each slide */}
+        <div key={title.id} className="max-w-2xl animate-fade-up">
           <div className="mb-5 flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-300">
             <span className="text-brand">dekhly</span>
             <span className="h-1 w-1 rounded-full bg-neutral-600" />
@@ -51,7 +100,7 @@ export default function Hero({
             <span className="flex items-center gap-1.5 font-semibold text-mint">
               <Star size={15} fill="currentColor" /> {title.match}% Match
             </span>
-            <span>{title.year}</span>
+            {title.year > 0 && <span>{title.year}</span>}
             <span className="rounded border border-white/25 px-1.5 py-px text-xs text-neutral-200">
               {title.rating}
             </span>
@@ -70,8 +119,8 @@ export default function Hero({
               href={watchHref(title)}
               className="flex items-center gap-2.5 rounded-md bg-white px-9 py-3 text-base font-bold text-ink transition hover:bg-white/85"
             >
-              <Play size={22} fill="currentColor" />
-              Play
+              <Tv size={22} />
+              Where to Watch
             </Link>
             <button
               onClick={() => onMoreInfo(title)}
@@ -80,14 +129,26 @@ export default function Hero({
               <Info size={22} />
               More Info
             </button>
-            <button
-              className="grid h-12 w-12 place-items-center rounded-full border border-white/30 bg-black/30 text-white backdrop-blur-md transition hover:border-white"
-              aria-label="Add to My List"
-            >
-              <Plus size={22} />
-            </button>
           </div>
         </div>
+
+        {/* Slide indicators */}
+        {slides.length > 1 && (
+          <div className="mt-8 flex items-center gap-2">
+            {slides.map((t, i) => (
+              <button
+                key={t.id}
+                onClick={() => setActive(i)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === active
+                    ? "w-8 bg-white"
+                    : "w-4 bg-white/30 hover:bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

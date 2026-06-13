@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Card from "./Card";
 import type { Row as RowType, Title } from "@/lib/data";
@@ -16,13 +16,30 @@ export default function Row({
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  const update = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setCanLeft(el.scrollLeft > 8);
+    setCanRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
+  };
+
+  // Set the initial arrow state once the row has measured.
+  useEffect(() => {
+    update();
+    const el = trackRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const scrollBy = (dir: 1 | -1) => {
     const el = trackRef.current;
     if (!el) return;
     el.scrollBy({ left: dir * el.clientWidth * 0.88, behavior: "smooth" });
   };
-  const onScroll = () => setCanLeft((trackRef.current?.scrollLeft ?? 0) > 8);
 
   return (
     <section className="group/row relative py-5">
@@ -50,7 +67,7 @@ export default function Row({
 
         <div
           ref={trackRef}
-          onScroll={onScroll}
+          onScroll={update}
           className="no-scrollbar flex gap-3 overflow-x-auto scroll-smooth px-5 pb-6 pt-2 md:gap-4 md:px-16"
         >
           {row.titles.map((t, i) => (
@@ -63,15 +80,17 @@ export default function Row({
           ))}
         </div>
 
-        <button
-          onClick={() => scrollBy(1)}
-          className="absolute right-0 top-0 z-20 hidden h-full w-16 place-items-center bg-gradient-to-l from-ink via-ink/70 to-transparent text-white opacity-0 transition group-hover/row:opacity-100 md:grid"
-          aria-label="Scroll right"
-        >
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-black/60 ring-1 ring-white/15 transition hover:scale-110">
-            <ChevronRight size={22} />
-          </span>
-        </button>
+        {canRight && (
+          <button
+            onClick={() => scrollBy(1)}
+            className="absolute right-0 top-0 z-20 hidden h-full w-16 place-items-center bg-gradient-to-l from-ink via-ink/70 to-transparent text-white opacity-0 transition group-hover/row:opacity-100 md:grid"
+            aria-label="Scroll right"
+          >
+            <span className="grid h-10 w-10 place-items-center rounded-full bg-black/60 ring-1 ring-white/15 transition hover:scale-110">
+              <ChevronRight size={22} />
+            </span>
+          </button>
+        )}
       </div>
     </section>
   );

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Card from "@/components/Card";
 import DetailModal from "@/components/DetailModal";
-import AuthGuard from "@/components/AuthGuard";
 import { type Title } from "@/lib/data";
 import { useWatchLater } from "@/lib/useWatchLater";
 import { BookmarkIcon } from "lucide-react";
@@ -14,9 +13,8 @@ export default function WatchLaterPage() {
   const { savedTitles, isLoaded } = useWatchLater();
 
   return (
-    <AuthGuard>
-      <div className="relative min-h-screen">
-        <Navbar />
+    <div className="relative min-h-screen">
+      <Navbar />
 
         <main className="relative z-10 min-h-screen pt-28">
           <div className="mx-auto max-w-[1700px] px-5 md:px-14 pb-16">
@@ -52,6 +50,5 @@ export default function WatchLaterPage() {
 
         <DetailModal title={selected} onClose={() => setSelected(null)} />
       </div>
-    </AuthGuard>
   );
 }

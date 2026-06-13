@@ -1,18 +1,17 @@
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import WatchPlayer from "@/components/WatchPlayer";
-import type { MediaType } from "@/lib/data";
+import { redirect } from "next/navigation";
+import { slugify } from "@/lib/data";
 
-export default async function WatchPage({
+// The where-to-watch content now lives on the canonical SEO detail page.
+// Redirect any old/bookmarked /watch links there.
+export default async function WatchRedirect({
   params,
+  searchParams,
 }: {
   params: Promise<{ type: string; id: string }>;
+  searchParams: Promise<{ name?: string }>;
 }) {
   const { type, id } = await params;
-  if (type !== "movie" && type !== "tv") notFound();
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-black" />}>
-      <WatchPlayer type={type as MediaType} id={id} />
-    </Suspense>
-  );
+  const { name } = await searchParams;
+  const mt = type === "tv" ? "tv" : "movie";
+  redirect(`/title/${mt}/${id}/${slugify(name || "title")}`);
 }
